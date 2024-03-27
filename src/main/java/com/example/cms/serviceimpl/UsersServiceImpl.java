@@ -13,6 +13,7 @@ import com.example.cms.repository.UsersRepository;
 import com.example.cms.service.UsersService;
 import com.example.cms.util.DuplicateEmailException;
 import com.example.cms.util.Responstructure;
+import com.example.cms.util.UserNotFoundByIdException;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class UsersServiceImpl implements UsersService {
 	private UsersRepository repo;
 	private Responstructure<UserResponse> structure;
 	private PasswordEncoder encoder;
+	private Responstructure<String> stringStructure;
 
 	@Override
 	public ResponseEntity<Responstructure<UserResponse>> saveUsers(UserRequest userRequest) {
@@ -48,8 +50,41 @@ public class UsersServiceImpl implements UsersService {
 	private Users mappedToUserRequestToUsers(Users user, UserRequest userRequest) {
 
 		return Users.builder().userName(userRequest.getUserName()).email(userRequest.getEmail())
-				.password(encoder.encode(userRequest.getPassword())).build();
+				.password(encoder.encode(userRequest.getPassword())).deleteU(updateRegister()).build();
 
+	}
+
+	private Boolean updateRegister() {
+		return false;
+	}
+
+	@Override
+	public ResponseEntity<Responstructure<String>> softDeleteUser(int userId) {
+
+		return repo.findById(userId).map(user -> {
+			user.setDeleteU(true);
+			repo.save(user);
+			return ResponseEntity
+					.ok(stringStructure.setStatusCode(HttpStatus.OK.value()).setMessage("user is deactivated")
+							.setData("user is deactivated .you can if change your mind active again...."));
+		}).orElseThrow(() -> new UserNotFoundByIdException("user not found .please give proper user Id"));
+
+	}
+
+	@Override
+	public ResponseEntity<Responstructure<UserResponse>> findUniqueId(int userId) {
+		
+		 Users user= repo.findById(userId).get();
+			
+			if(user.isDeleteU()==false)
+			{
+				return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value()).setMessage("user Found").setData(mapTouser(user)));
+			}
+			else
+			{
+			
+				throw new UserNotFoundByIdException("user Not Found");
+			}
 		
 	}
 

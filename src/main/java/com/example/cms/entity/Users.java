@@ -2,6 +2,8 @@ package com.example.cms.entity;
 
 import java.time.LocalDateTime;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,6 +17,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,8 +32,8 @@ import lombok.Setter;
 @EntityListeners(AuditingEntityListener.class)
 public class Users {
 
-	@Id 
-	@GeneratedValue(strategy = GenerationType.IDENTITY) 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int userId;
 	private String userName;
 	private String email;
@@ -40,5 +43,5 @@ public class Users {
 	private LocalDateTime createdAt;
 	@LastModifiedDate
 	private LocalDateTime lastModifiedAt;
-
+	private boolean deleteU;
 }

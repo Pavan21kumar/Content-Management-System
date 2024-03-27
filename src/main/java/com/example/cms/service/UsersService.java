@@ -13,4 +13,6 @@ public interface UsersService {
 
 	ResponseEntity<Responstructure<UserResponse>> saveUsers( UserRequest userRequest);
 
+	ResponseEntity<Responstructure<String>> softDeleteUser(int userId);
+
 }

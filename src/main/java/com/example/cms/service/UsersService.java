@@ -15,4 +15,6 @@ public interface UsersService {
 
 	ResponseEntity<Responstructure<String>> softDeleteUser(int userId);
 
+	ResponseEntity<Responstructure<UserResponse>> findUniqueId(int userId);
+
 }

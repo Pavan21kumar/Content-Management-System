@@ -52,7 +52,6 @@ public class UsersServiceImpl implements UsersService {
 		return Users.builder().userName(userRequest.getUserName()).email(userRequest.getEmail())
 				.password(encoder.encode(userRequest.getPassword())).deleteU(updateRegister()).build();
 
-		
 	}
 
 	private Boolean updateRegister() {
@@ -61,15 +60,31 @@ public class UsersServiceImpl implements UsersService {
 
 	@Override
 	public ResponseEntity<Responstructure<String>> softDeleteUser(int userId) {
+
+		return repo.findById(userId).map(user -> {
+			user.setDeleteU(true);
+			repo.save(user);
+			return ResponseEntity
+					.ok(stringStructure.setStatusCode(HttpStatus.OK.value()).setMessage("user is deactivated")
+							.setData("user is deactivated .you can if change your mind active again...."));
+		}).orElseThrow(() -> new UserNotFoundByIdException("user not found .please give proper user Id"));
+
+	}
+
+	@Override
+	public ResponseEntity<Responstructure<UserResponse>> findUniqueId(int userId) {
 		
-		return repo.findById(userId).map(user ->{
-		user.setDeleteU(true);
-		repo.save(user);
-		return ResponseEntity.ok(stringStructure.setStatusCode(HttpStatus.OK.value())
-				.setMessage("user is deactivated")
-				.setData("user is deactivated .you can if change your mind active again...."));
-		}).orElseThrow(()-> new UserNotFoundByIdException("user not found .please give proper user Id"));
-		
+		 Users user= repo.findById(userId).get();
+			
+			if(user.isDeleteU()==false)
+			{
+				return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value()).setMessage("user Found").setData(mapTouser(user)));
+			}
+			else
+			{
+			
+				throw new UserNotFoundByIdException("user Not Found");
+			}
 		
 	}
 

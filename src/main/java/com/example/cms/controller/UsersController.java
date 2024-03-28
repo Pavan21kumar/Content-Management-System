@@ -1,8 +1,5 @@
 package com.example.cms.controller;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,10 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.cms.dto.UserRequest;
 import com.example.cms.dto.UserResponse;
-import com.example.cms.entity.Users;
-import com.example.cms.repository.UsersRepository;
 import com.example.cms.service.UsersService;
-import com.example.cms.util.DuplicateEmailException;
 import com.example.cms.util.ErrorStructure;
 import com.example.cms.util.Responstructure;
 

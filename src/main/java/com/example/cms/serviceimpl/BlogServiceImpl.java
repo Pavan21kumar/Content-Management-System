@@ -12,6 +12,7 @@ import com.example.cms.entity.Blogs;
 import com.example.cms.repository.BlogsRepository;
 import com.example.cms.repository.UsersRepository;
 import com.example.cms.service.BlogsService;
+import com.example.cms.util.BlogNotFoundException;
 import com.example.cms.util.Responstructure;
 import com.example.cms.util.TitleAllreadyPresentException;
 import com.example.cms.util.TopicIsNullException;
@@ -70,6 +71,16 @@ public class BlogServiceImpl implements BlogsService {
 		}
 		return ResponseEntity.ok(booleanStructure.setStatusCode(HttpStatus.OK.value()).setMessage("title is found").setData(false));
 
+	}
+
+	@Override
+	public ResponseEntity<Responstructure<BlogResponse>> findBlogById(int blogId) {
+		
+		return repo.findById(blogId).map(blog ->{
+			return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value()).setMessage("blog Found").setData(mapToBlogResponse(blog)));
+					
+		}).orElseThrow(()-> new BlogNotFoundException("Blog Not Found By GivenId"));
+		
 	}
 
 }

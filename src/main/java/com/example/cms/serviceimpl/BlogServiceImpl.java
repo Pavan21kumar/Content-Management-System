@@ -26,6 +26,7 @@ public class BlogServiceImpl implements BlogsService {
 	private BlogsRepository repo;
 	private Responstructure<BlogResponse> structure;
 	private UsersRepository userRepo;
+	private Responstructure<Boolean> booleanStructure;
 
 	@Override
 	public ResponseEntity<Responstructure<BlogResponse>> createBlog(BlogRequest blogRequest, int userId) {
@@ -56,7 +57,18 @@ public class BlogServiceImpl implements BlogsService {
 
 	private BlogResponse mapToBlogResponse(Blogs blog) {
 
-		return BlogResponse.builder().title(blog.getTitle()).topic(blog.getTopic()).about(blog.getAbout()).blogId(blog.getBlogId()).build();
+		return BlogResponse.builder().title(blog.getTitle()).topic(blog.getTopic()).about(blog.getAbout())
+				.blogId(blog.getBlogId()).build();
+
+	}
+
+	@Override
+	public ResponseEntity<Responstructure<Boolean>> checkBlogTitleAvailable(String title) {
+		if(repo.existsByTitle(title))
+		{
+			return ResponseEntity.ok(booleanStructure.setStatusCode(HttpStatus.OK.value()).setMessage("title is found").setData(true));
+		}
+		return ResponseEntity.ok(booleanStructure.setStatusCode(HttpStatus.OK.value()).setMessage("title is found").setData(false));
 
 	}
 

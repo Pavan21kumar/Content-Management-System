@@ -38,7 +38,7 @@ public class SecurityConfig {
 	{
 		
 		return http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth->
-		auth.requestMatchers("/users/register","/users/{userId}","/users/{userId}/blogs").permitAll().anyRequest().authenticated()).formLogin(Customizer.withDefaults()).build();
+		auth.requestMatchers("/users/register","/users/{userId}").permitAll().anyRequest().authenticated()).formLogin(Customizer.withDefaults()).build();
 	}
 }
 

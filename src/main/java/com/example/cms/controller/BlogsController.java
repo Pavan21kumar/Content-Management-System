@@ -1,6 +1,7 @@
 package com.example.cms.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,5 +34,10 @@ public class BlogsController {
 	public ResponseEntity<Responstructure<BlogResponse>> createBlogs(@Valid @RequestBody BlogRequest blog,@PathVariable int userId)
 	{
 		return service.createBlog(blog,userId);
+	}
+	@GetMapping("/titles/{title}/blogs")
+	public ResponseEntity<Responstructure<Boolean>> checkBlogTitleAvailable(@PathVariable String title)
+	{
+		return service.checkBlogTitleAvailable(title);
 	}
 }

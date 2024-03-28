@@ -25,19 +25,32 @@ import lombok.AllArgsConstructor;
 public class BlogsController {
 
 	private BlogsService service;
-	
+
 	@Operation(description = "this endpoit  is used to create a Blog Based On User", responses = {
 			@ApiResponse(responseCode = "200", description = "Blog is Created "),
-			@ApiResponse(responseCode = "400", description = "invalid inputs" ,content = @Content(schema = @Schema(implementation = ErrorStructure.class))) 
-			,@ApiResponse(responseCode = "404", description = "User Not Found" ,content = @Content(schema = @Schema(implementation = ErrorStructure.class)))})
+			@ApiResponse(responseCode = "400", description = "invalid inputs", content = @Content(schema = @Schema(implementation = ErrorStructure.class))),
+			@ApiResponse(responseCode = "404", description = "User Not Found", content = @Content(schema = @Schema(implementation = ErrorStructure.class))) })
+
 	@PostMapping("/users/{userId}/blogs")
-	public ResponseEntity<Responstructure<BlogResponse>> createBlogs(@Valid @RequestBody BlogRequest blog,@PathVariable int userId)
-	{
-		return service.createBlog(blog,userId);
+	public ResponseEntity<Responstructure<BlogResponse>> createBlogs(@Valid @RequestBody BlogRequest blog,
+			@PathVariable int userId) {
+		return service.createBlog(blog, userId);
 	}
+
+	@Operation(description = "this endpoit  is used to check Title is present or not ", responses = {
+			@ApiResponse(responseCode = "200", description = "Title is present is Created "),
+			@ApiResponse(responseCode = "404", description = "Title Not Found", content = @Content(schema = @Schema(implementation = ErrorStructure.class))) })
 	@GetMapping("/titles/{title}/blogs")
-	public ResponseEntity<Responstructure<Boolean>> checkBlogTitleAvailable(@PathVariable String title)
-	{
+	public ResponseEntity<Responstructure<Boolean>> checkBlogTitleAvailable(@PathVariable String title) {
 		return service.checkBlogTitleAvailable(title);
 	}
+
+	@Operation(description = "this endpoit  is used to check Blog Present or not Based On BlogId ", responses = {
+			@ApiResponse(responseCode = "200", description = "Blog is Found "),
+			@ApiResponse(responseCode = "404", description = "Blog Not Found", content = @Content(schema = @Schema(implementation = ErrorStructure.class))) })
+	@GetMapping("/blogs/{blogId}")
+	public ResponseEntity<Responstructure<BlogResponse>> findBlogByBlogId(@PathVariable int blogId) {
+		return service.findBlogById(blogId);
+	}
+
 }

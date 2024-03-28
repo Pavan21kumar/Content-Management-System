@@ -13,4 +13,6 @@ public interface BlogsService {
 
 	ResponseEntity<Responstructure<Boolean>> checkBlogTitleAvailable(String title);
 
+	ResponseEntity<Responstructure<BlogResponse>> findBlogById(int blogId);
+
 }

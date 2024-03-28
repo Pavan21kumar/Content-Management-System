@@ -17,7 +17,7 @@ public class UserRequest {
 	private String userName;
 	@NotBlank(message = "email should be not null")
 	@NotNull(message = "userEmail should not be null")
-	@Column(unique = true)
+	
 	@Email(regexp = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+(com|org|in|co|net|com\\.au|com\\.com)", message = "email is not valid please enter correct email")
 	// ^[a-z0-9\\.\\_\\-\\+a-z0-9]*\\@[a-z0-9]*\\.(com|org|in|co|net|com\\.au|com\\.com)
 	private String email;

@@ -43,11 +43,6 @@ public class UsersController {
 		return service.saveUsers(userRequest);
 	}
 	
-	@GetMapping("/test")
-	public String test()
-	{
-		return "Hello from cms";
-	}
 	@Operation(description = "this endpoit  is used to softDeleting  Users", responses = {
 			@ApiResponse(responseCode = "200", description = "user is deactiveted"),
 			@ApiResponse(responseCode = "404", description = "invalid user Id" ,content = @Content(schema = @Schema(implementation = ErrorStructure.class)))})
@@ -58,7 +53,7 @@ public class UsersController {
 	}
 	@Operation(description = "this endpoit  is used to register the Users", responses = {
 			@ApiResponse(responseCode = "200", description = "user is Found"),
-			,@ApiResponse(responseCode = "404", description = "invalid userId" ,content = @Content(schema = @Schema(implementation = ErrorStructure.class)))})
+			@ApiResponse(responseCode = "404", description = "invalid userId" ,content = @Content(schema = @Schema(implementation = ErrorStructure.class)))})
 	@GetMapping("/users/{userId}")
 	public ResponseEntity<Responstructure<UserResponse>> findUniqueId(@PathVariable int userId)
 	{

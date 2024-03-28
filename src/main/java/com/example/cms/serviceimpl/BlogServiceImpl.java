@@ -65,22 +65,37 @@ public class BlogServiceImpl implements BlogsService {
 
 	@Override
 	public ResponseEntity<Responstructure<Boolean>> checkBlogTitleAvailable(String title) {
-		if(repo.existsByTitle(title))
-		{
-			return ResponseEntity.ok(booleanStructure.setStatusCode(HttpStatus.OK.value()).setMessage("title is found").setData(true));
+		if (repo.existsByTitle(title)) {
+			return ResponseEntity.ok(
+					booleanStructure.setStatusCode(HttpStatus.OK.value()).setMessage("title is found").setData(true));
 		}
-		return ResponseEntity.ok(booleanStructure.setStatusCode(HttpStatus.OK.value()).setMessage("title is found").setData(false));
+		return ResponseEntity
+				.ok(booleanStructure.setStatusCode(HttpStatus.OK.value()).setMessage("title is found").setData(false));
 
 	}
 
 	@Override
 	public ResponseEntity<Responstructure<BlogResponse>> findBlogById(int blogId) {
-		
-		return repo.findById(blogId).map(blog ->{
-			return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value()).setMessage("blog Found").setData(mapToBlogResponse(blog)));
-					
-		}).orElseThrow(()-> new BlogNotFoundException("Blog Not Found By GivenId"));
-		
+
+		return repo.findById(blogId).map(blog -> {
+			return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value()).setMessage("blog Found")
+					.setData(mapToBlogResponse(blog)));
+
+		}).orElseThrow(() -> new BlogNotFoundException("Blog Not Found By GivenId"));
+
+	}
+
+	@Override
+	public ResponseEntity<Responstructure<BlogResponse>> updateBlogdata(BlogRequest blogRequest, int blogId) {
+		return repo.findById(blogId).map(blog -> {
+
+			blog = mapToBlogs(blogRequest);
+
+			return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value()).setMessage("blog Found")
+					.setData(mapToBlogResponse(blog)));
+
+		}).orElseThrow(() -> new BlogNotFoundException("Blog Not Found By GivenId"));
+
 	}
 
 }

@@ -15,4 +15,6 @@ public interface BlogsService {
 
 	ResponseEntity<Responstructure<BlogResponse>> findBlogById(int blogId);
 
+	ResponseEntity<Responstructure<BlogResponse>> updateBlogdata(BlogRequest blogRequest, int blogId);
+
 }

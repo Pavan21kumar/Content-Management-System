@@ -5,8 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class BlogNotFoundException extends RuntimeException
-{
+public class BlogNotFoundException extends RuntimeException {
 	private String message;
 
 }

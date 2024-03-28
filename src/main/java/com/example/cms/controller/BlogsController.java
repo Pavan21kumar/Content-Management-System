@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -51,6 +52,16 @@ public class BlogsController {
 	@GetMapping("/blogs/{blogId}")
 	public ResponseEntity<Responstructure<BlogResponse>> findBlogByBlogId(@PathVariable int blogId) {
 		return service.findBlogById(blogId);
+	}
+
+	@Operation(description = "this endpoit  is used to Update the Blog Based On BlogId", responses = {
+			@ApiResponse(responseCode = "200", description = "Blog is Updated "),
+			@ApiResponse(responseCode = "400", description = "invalid inputs", content = @Content(schema = @Schema(implementation = ErrorStructure.class))),
+			@ApiResponse(responseCode = "404", description = "Blog Not Found", content = @Content(schema = @Schema(implementation = ErrorStructure.class))) })
+	@PutMapping("/blogs/{blogId}")
+	public ResponseEntity<Responstructure<BlogResponse>> updateBlogData(@RequestBody BlogRequest blogRequest,
+			@PathVariable int blogId) {
+		return service.updateBlogdata(blogRequest, blogId);
 	}
 
 }

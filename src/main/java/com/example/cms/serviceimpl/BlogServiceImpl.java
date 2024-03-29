@@ -91,9 +91,9 @@ public class BlogServiceImpl implements BlogsService {
 
 		Blogs	blogs = mapToBlogs(blogRequest);
 		blogs.setBlogId(blog.getBlogId());
-		repo.save(blogs);
+		blogs=repo.save(blogs);
 			return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value()).setMessage("blog Found")
-					.setData(mapToBlogResponse(blog)));
+					.setData(mapToBlogResponse(blogs)));
 
 		}).orElseThrow(() -> new BlogNotFoundException("Blog Not Found By GivenId"));
 

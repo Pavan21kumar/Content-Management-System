@@ -1,5 +1,8 @@
 package com.example.cms.serviceimpl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -8,6 +11,7 @@ import com.example.cms.dto.BlogRequest;
 import com.example.cms.dto.BlogResponse;
 import com.example.cms.entity.Blogs;
 import com.example.cms.entity.ContributionPanel;
+import com.example.cms.entity.Users;
 import com.example.cms.repository.BlogsRepository;
 import com.example.cms.repository.ContributionPanelRepository;
 import com.example.cms.repository.UsersRepository;
@@ -33,20 +37,23 @@ public class BlogServiceImpl implements BlogsService {
 	@Override
 	public ResponseEntity<Responstructure<BlogResponse>> createBlog(BlogRequest blogRequest, int userId) {
 
+		List<Users> list = new ArrayList<Users>();
 		return userRepo.findById(userId).map(user -> {
 			if (repo.existsByTitle(blogRequest.getTitle()))
 				throw new TitleAllreadyPresentException("Title is allready present");
 			if (blogRequest.getTopic().length < 1)
 				throw new TopicIsNullException("topic should be at least one");
-			ContributionPanel panel = new ContributionPanel();
 
 			Blogs blog = mapToBlogs(blogRequest);
-			
-			blog.setUser(user);
-			blog.setPanel(panel);
-			panelRepository.save(panel);
-			blog = repo.save(blog);
 
+			blog.setUser(user);
+			ContributionPanel panel = new ContributionPanel();
+
+			panel.setUsers(list);
+			blog.setPanel(panel);
+
+			blog = repo.save(blog);
+			panelRepository.save(panel);
 			userRepo.save(user);
 			return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value()).setMessage("blog is created...")
 					.setData(mapToBlogResponse(blog)));

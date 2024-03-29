@@ -1,7 +1,5 @@
 package com.example.cms.serviceimpl;
 
-import java.util.Arrays;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -9,7 +7,9 @@ import org.springframework.stereotype.Service;
 import com.example.cms.dto.BlogRequest;
 import com.example.cms.dto.BlogResponse;
 import com.example.cms.entity.Blogs;
+import com.example.cms.entity.ContributionPanel;
 import com.example.cms.repository.BlogsRepository;
+import com.example.cms.repository.ContributionPanelRepository;
 import com.example.cms.repository.UsersRepository;
 import com.example.cms.service.BlogsService;
 import com.example.cms.util.BlogNotFoundException;
@@ -28,6 +28,7 @@ public class BlogServiceImpl implements BlogsService {
 	private Responstructure<BlogResponse> structure;
 	private UsersRepository userRepo;
 	private Responstructure<Boolean> booleanStructure;
+	private ContributionPanelRepository panelRepository;
 
 	@Override
 	public ResponseEntity<Responstructure<BlogResponse>> createBlog(BlogRequest blogRequest, int userId) {
@@ -37,10 +38,15 @@ public class BlogServiceImpl implements BlogsService {
 				throw new TitleAllreadyPresentException("Title is allready present");
 			if (blogRequest.getTopic().length < 1)
 				throw new TopicIsNullException("topic should be at least one");
-			Blogs blog = mapToBlogs(blogRequest);
-			blog.setUsers(Arrays.asList(user));
+			ContributionPanel panel = new ContributionPanel();
 
+			Blogs blog = mapToBlogs(blogRequest);
+			
+			blog.setUser(user);
+			blog.setPanel(panel);
+			panelRepository.save(panel);
 			blog = repo.save(blog);
+
 			userRepo.save(user);
 			return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value()).setMessage("blog is created...")
 					.setData(mapToBlogResponse(blog)));
@@ -69,8 +75,8 @@ public class BlogServiceImpl implements BlogsService {
 			return ResponseEntity.ok(
 					booleanStructure.setStatusCode(HttpStatus.OK.value()).setMessage("title is found").setData(true));
 		}
-		return ResponseEntity
-				.ok(booleanStructure.setStatusCode(HttpStatus.OK.value()).setMessage("title is found").setData(false));
+		return ResponseEntity.ok(
+				booleanStructure.setStatusCode(HttpStatus.OK.value()).setMessage("title is Not found").setData(false));
 
 	}
 
@@ -89,9 +95,11 @@ public class BlogServiceImpl implements BlogsService {
 	public ResponseEntity<Responstructure<BlogResponse>> updateBlogdata(BlogRequest blogRequest, int blogId) {
 		return repo.findById(blogId).map(blog -> {
 
-		Blogs	blogs = mapToBlogs(blogRequest);
-		blogs.setBlogId(blog.getBlogId());
-		blogs=repo.save(blogs);
+			Blogs blogs = mapToBlogs(blogRequest);
+			blogs.setUser(blog.getUser());
+			blogs.setBlogId(blog.getBlogId());
+
+			blogs = repo.save(blogs);
 			return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value()).setMessage("blog Found")
 					.setData(mapToBlogResponse(blogs)));
 

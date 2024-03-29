@@ -89,10 +89,11 @@ public class BlogServiceImpl implements BlogsService {
 	public ResponseEntity<Responstructure<BlogResponse>> updateBlogdata(BlogRequest blogRequest, int blogId) {
 		return repo.findById(blogId).map(blog -> {
 
-			blog = mapToBlogs(blogRequest);
-
+		Blogs	blogs = mapToBlogs(blogRequest);
+		blogs.setBlogId(blog.getBlogId());
+		blogs=repo.save(blogs);
 			return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value()).setMessage("blog Found")
-					.setData(mapToBlogResponse(blog)));
+					.setData(mapToBlogResponse(blogs)));
 
 		}).orElseThrow(() -> new BlogNotFoundException("Blog Not Found By GivenId"));
 

@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.example.cms.util.DuplicateEmailException;
 import com.example.cms.util.ErrorStructure;
+import com.example.cms.util.IllegalAccessRequestException;
 import com.example.cms.util.PanelNotFoundByIdException;
 import com.example.cms.util.TitleAllreadyPresentException;
 import com.example.cms.util.TopicIsNullException;
+import com.example.cms.util.UNAUTHORIZEDException;
 import com.example.cms.util.UserNotFoundByIdException;
 
 import lombok.AllArgsConstructor;
@@ -57,13 +59,26 @@ public class AllCustomeExceptionHandler {
 
 		return handlerexception(HttpStatus.BAD_REQUEST, "User Register faild", e.getMessage());
 		// ResponseEntity.badRequest().body(structure.setStatusCode(HttpStatus.BAD_REQUEST.value())
-		// .setMessage("duplicate email ").setRootCouse(e.getMessage()));
+		// .setMessage("duplicate email ").setRootCous/e(e.getMessage()));
 	}
 
 	@ExceptionHandler
 	public ResponseEntity<ErrorStructure<String>> handlerPanelNotFoundExceptionHandler(PanelNotFoundByIdException e) {
 		return ResponseEntity.badRequest().body(errorStructure.setStatusCode(HttpStatus.BAD_REQUEST.value())
 				.setMessage("user name not found").setRootCouse(e.getMessage()));
+	}
+
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> handlerIllegalAccessRequestExceptionHandler(
+			IllegalAccessRequestException e) {
+		return ResponseEntity.badRequest().body(errorStructure.setStatusCode(HttpStatus.BAD_REQUEST.value())
+				.setMessage("Contributor is allready present").setRootCouse(e.getMessage()));
+	}
+
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> handlerUnutherizedExceptionHandler(UNAUTHORIZEDException e) {
+		return ResponseEntity.badRequest().body(errorStructure.setStatusCode(HttpStatus.BAD_REQUEST.value())
+				.setMessage("Owner shloud be login.......").setRootCouse(e.getMessage()));
 	}
 
 }

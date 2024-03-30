@@ -17,6 +17,7 @@ import com.example.cms.repository.ContributionPanelRepository;
 import com.example.cms.repository.UsersRepository;
 import com.example.cms.security.CustomeUserDetailservice;
 import com.example.cms.service.ContributionPanelService;
+import com.example.cms.util.IllegalAccessRequestException;
 import com.example.cms.util.PanelNotFoundByIdException;
 import com.example.cms.util.Responstructure;
 import com.example.cms.util.UNAUTHORIZEDException;
@@ -59,9 +60,13 @@ public class ContributionPanelServiceImpl implements ContributionPanelService {
 		return userRepo.findByEmail(email).map(owner -> {
 			return panelRepo.findById(panelId).map(panel -> {
 				if (!blogRepo.existsByUserAndPanel(owner, panel))
-					throw new UNAUTHORIZEDException("Fiald To Add Contribute");
-				// throw new IllegalAccessRequestException("Fiald To Add Contribute");
+					throw new UNAUTHORIZEDException("Fiald To Add Contribut.and owner should be login");
+
 				return userRepo.findById(userId).map(contributer -> {
+					if (panel.getUsers().contains(contributer) == true) {
+
+						throw new IllegalAccessRequestException("Fiald To Add Contribute");
+					}
 					panel.getUsers().add(contributer);
 					panelRepo.save(panel);
 					return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value())
@@ -75,12 +80,12 @@ public class ContributionPanelServiceImpl implements ContributionPanelService {
 	@Override
 	public ResponseEntity<Responstructure<ContributionPanelResponse>> removeUserFromContribution(int userId,
 			int panelId) {
-		
+
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		return userRepo.findByEmail(email).map(owner -> {
 			return panelRepo.findById(panelId).map(panel -> {
 				if (!blogRepo.existsByUserAndPanel(owner, panel))
-					throw new UNAUTHORIZEDException("Fiald To Add Contribute");
+					throw new UNAUTHORIZEDException("Fiald To remove Contribute");
 				// throw new IllegalAccessRequestException("Fiald To Add Contribute");
 				return userRepo.findById(userId).map(contributer -> {
 					panel.getUsers().remove(contributer);
@@ -90,7 +95,7 @@ public class ContributionPanelServiceImpl implements ContributionPanelService {
 				}).orElseThrow(() -> new UserNotFoundByIdException("user Not Found By Given Id"));
 			}).orElseThrow(() -> new PanelNotFoundByIdException("panel not found By GivenId"));
 		}).get();
-		
+
 	}
 
 }

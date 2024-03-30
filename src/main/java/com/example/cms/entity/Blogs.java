@@ -1,5 +1,7 @@
 package com.example.cms.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,6 +31,7 @@ public class Blogs {
 	private String[] topic;
 	private String about;
 	@ManyToOne
+	@JsonIgnore
 	private Users user;
 	@OneToOne
 	private ContributionPanel panel;

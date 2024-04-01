@@ -50,17 +50,14 @@ public class BlogPostServiceImpl implements BlogPostService {
 	public BlogPostResponse mapToResponse(BlogPost post) {
 
 		return BlogPostResponse.builder().title(post.getTitle()).postId(post.getPostId()).summary(post.getSummary())
-				.type(post.getType()).seo(post.getSeo()).seoDescription(post.getSeoDescription())
-				.seoTags(post.getSeoTags()).createAt(post.getCreateAt()).createBy(post.getCreateBy())
-				.lastModifiedAt(post.getLastModifiedAt()).LastModifiedBy(post.getLastModifiedBy())
-				.subTitle(post.getSubTitle()).build();
+				.createAt(post.getCreateAt()).createBy(post.getCreateBy()).lastModifiedAt(post.getLastModifiedAt())
+				.LastModifiedBy(post.getLastModifiedBy()).subTitle(post.getSubTitle()).type(post.getType()).build();
 	}
 
 	private BlogPost maptoBlogPost(BlogPostRequest postRequest) {
 
 		return BlogPost.builder().title(postRequest.getTitle()).subTitle(postRequest.getSubTitle())
-				.summary(postRequest.getSummary()).type(PostType.DRAFT).seo(postRequest.getSeo())
-				.seoDescription(postRequest.getSeoDescription()).seoTags(postRequest.getSeoTags()).build();
+				.summary(postRequest.getSummary()).type(PostType.DRAFT).build();
 
 	}
 

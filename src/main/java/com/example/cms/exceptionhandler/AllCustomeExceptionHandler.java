@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.example.cms.util.BlogNotFoundException;
 import com.example.cms.util.DuplicateEmailException;
 import com.example.cms.util.ErrorStructure;
 import com.example.cms.util.IllegalAccessRequestException;
@@ -79,6 +80,12 @@ public class AllCustomeExceptionHandler {
 	public ResponseEntity<ErrorStructure<String>> handlerUnutherizedExceptionHandler(UNAUTHORIZEDException e) {
 		return ResponseEntity.badRequest().body(errorStructure.setStatusCode(HttpStatus.BAD_REQUEST.value())
 				.setMessage("Owner shloud be login.......").setRootCouse(e.getMessage()));
+	}
+
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> handlerBlogNotFoundExceptionHandler(BlogNotFoundException e) {
+		return ResponseEntity.badRequest().body(errorStructure.setStatusCode(HttpStatus.BAD_REQUEST.value())
+				.setMessage("Blog Not Found ......").setRootCouse(e.getMessage()));
 	}
 
 }

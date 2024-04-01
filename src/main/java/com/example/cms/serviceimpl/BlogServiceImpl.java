@@ -50,10 +50,10 @@ public class BlogServiceImpl implements BlogsService {
 			ContributionPanel panel = new ContributionPanel();
 
 			panel.setUsers(list);
-			blog.setPanel(panel);
 
 			blog = repo.save(blog);
 			panelRepository.save(panel);
+			blog.setPanel(panel);
 			userRepo.save(user);
 			return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value()).setMessage("blog is created...")
 					.setData(mapToBlogResponse(blog)));

@@ -1,5 +1,7 @@
 package com.example.cms.entity;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
@@ -7,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -35,4 +38,6 @@ public class Blogs {
 	private Users user;
 	@OneToOne
 	private ContributionPanel panel;
+	@OneToMany(mappedBy = "blog")
+	private List<BlogPost> blogPost;
 }

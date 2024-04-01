@@ -30,8 +30,7 @@ import lombok.AllArgsConstructor;
 public class ContributionPanelServiceImpl implements ContributionPanelService {
 
 	private Responstructure<ContributionPanelResponse> structure;
-	private CustomeUserDetailservice service;
-	private UsersRepository userRepo;
+   	private UsersRepository userRepo;
 	private BlogsRepository blogRepo;
 	private ContributionPanelRepository panelRepo;
 

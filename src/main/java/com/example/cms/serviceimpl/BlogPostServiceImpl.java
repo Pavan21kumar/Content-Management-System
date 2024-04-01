@@ -11,6 +11,7 @@ import com.example.cms.dto.BlogPostRequest;
 import com.example.cms.dto.BlogPostResponse;
 import com.example.cms.dto.BlogResponse;
 import com.example.cms.entity.BlogPost;
+import com.example.cms.entity.Blogs;
 import com.example.cms.entity.Users;
 import com.example.cms.enums.PostType;
 import com.example.cms.repository.BlogPostRepository;
@@ -33,14 +34,17 @@ public class BlogPostServiceImpl implements BlogPostService {
 	private Responstructure<BlogPostResponse> response;
 	private UsersRepository userRepo;
 
+	// String email =
+	// SecurityContextHolder.getContext().getAuthentication().getName();
+
 	@Override
 	public ResponseEntity<Responstructure<BlogPostResponse>> createDraft(BlogPostRequest postRequest, int blogId) {
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		return blogRepo.findById(blogId).map(blog -> {
 			List<Users> users = blog.getPanel().getUsers();
-			List<Users> listUser = userRepo.findAll();
 			for (Users user : users) {
-				if (user.getEmail().equals(email) || listUser.contains(userRepo.findByEmail(email).get())) {
+				if (user.getEmail().equals(email) || validation(email, blog)) {
+
 					BlogPost blogPost = maptoBlogPost(postRequest);
 					blogPost.setBlog(blog);
 					blogPost = postRepo.save(blogPost);
@@ -68,13 +72,16 @@ public class BlogPostServiceImpl implements BlogPostService {
 
 	@Override
 	public ResponseEntity<Responstructure<BlogPostResponse>> updateDraft(int postId) {
-
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		return postRepo.findById(postId).map(post -> {
-			post.setType(PostType.PUBLISHED);
-			post.setBlog(post.getBlog());
-			post = postRepo.save(post);
-			return ResponseEntity.ok(response.setStatusCode(HttpStatus.OK.value())
-					.setMessage("post is updated Draft To Published").setData(mapToResponse(post)));
+			if (validation(email, post.getBlog())) {
+				post.setType(PostType.PUBLISHED);
+				post.setBlog(post.getBlog());
+				post = postRepo.save(post);
+				return ResponseEntity.ok(response.setStatusCode(HttpStatus.OK.value())
+						.setMessage("post is updated Draft To Published").setData(mapToResponse(post)));
+			}
+			throw new IllegalAccessRequestException("Login User Not A Contributer or Owner...");
 
 		}).orElseThrow(() -> new BlogNotFoundException("BlogPost not found by Given Id"));
 
@@ -82,16 +89,32 @@ public class BlogPostServiceImpl implements BlogPostService {
 
 	@Override
 	public ResponseEntity<Responstructure<BlogPostResponse>> updatePost(BlogPostRequest postRequest, int postId) {
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		return postRepo.findById(postId).map(post -> {
-			post.setTitle(postRequest.getTitle());
-			post.setSubTitle(postRequest.getSubTitle());
-			post.setSummary(postRequest.getSummary());
-			post.setBlog(post.getBlog());
-			post = postRepo.save(post);
-			return ResponseEntity.ok(response.setStatusCode(HttpStatus.OK.value()).setMessage("post is updated..")
-					.setData(mapToResponse(post)));
+			if (validation(email, post.getBlog())) {
+				post.setTitle(postRequest.getTitle());
+				post.setSubTitle(postRequest.getSubTitle());
+				post.setSummary(postRequest.getSummary());
+				post.setBlog(post.getBlog());
+				post = postRepo.save(post);
+				return ResponseEntity.ok(response.setStatusCode(HttpStatus.OK.value()).setMessage("post is updated..")
+						.setData(mapToResponse(post)));
+			}
+			throw new IllegalAccessRequestException("Login User Not A Contributer or Owner...");
 
 		}).orElseThrow(() -> new BlogNotFoundException("blogPost not found by Given id"));
+
+	}
+
+	private boolean validation(String email, Blogs blog) {
+		return userRepo.findByEmail(email).map(user -> {
+			List<Blogs> blogs = user.getBlog();
+			for (Blogs blogss : blogs) {
+				if (blogss.getPanel().getPanelId() == blog.getPanel().getPanelId())
+					return true;
+			}
+			return false;
+		}).get();
 
 	}
 

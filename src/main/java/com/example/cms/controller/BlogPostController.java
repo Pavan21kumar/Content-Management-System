@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.cms.dto.BlogPostRequest;
 import com.example.cms.dto.BlogPostResponse;
-import com.example.cms.dto.BlogResponse;
 import com.example.cms.service.BlogPostService;
 import com.example.cms.util.ErrorStructure;
 import com.example.cms.util.Responstructure;
@@ -45,5 +44,15 @@ public class BlogPostController {
 	@PutMapping("/blog-posts/{postId}")
 	public ResponseEntity<Responstructure<BlogPostResponse>> updateDraft(@PathVariable int postId) {
 		return blogService.updateDraft(postId);
+	}
+
+	@Operation(description = "this endpoit  is used to update a Post Based On postId", responses = {
+			@ApiResponse(responseCode = "200", description = "Post is Updated "),
+			@ApiResponse(responseCode = "400", description = "invalid inputs", content = @Content(schema = @Schema(implementation = ErrorStructure.class))),
+			@ApiResponse(responseCode = "404", description = "Post Not Found", content = @Content(schema = @Schema(implementation = ErrorStructure.class))) })
+	@PutMapping("/blog-posts/{postId}/post")
+	public ResponseEntity<Responstructure<BlogPostResponse>> updatePost(@Valid @RequestBody BlogPostRequest postRequest,
+			@PathVariable int postId) {
+		return blogService.updatePost(postRequest, postId);
 	}
 }

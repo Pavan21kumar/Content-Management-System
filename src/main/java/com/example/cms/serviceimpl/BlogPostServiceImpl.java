@@ -15,11 +15,13 @@ import com.example.cms.entity.Users;
 import com.example.cms.enums.PostType;
 import com.example.cms.repository.BlogPostRepository;
 import com.example.cms.repository.BlogsRepository;
+import com.example.cms.repository.UsersRepository;
 import com.example.cms.service.BlogPostService;
 import com.example.cms.util.BlogNotFoundException;
 import com.example.cms.util.IllegalAccessRequestException;
 import com.example.cms.util.Responstructure;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -29,20 +31,24 @@ public class BlogPostServiceImpl implements BlogPostService {
 	private BlogsRepository blogRepo;
 	private BlogPostRepository postRepo;
 	private Responstructure<BlogPostResponse> response;
+	private UsersRepository userRepo;
 
 	@Override
 	public ResponseEntity<Responstructure<BlogPostResponse>> createDraft(BlogPostRequest postRequest, int blogId) {
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		return blogRepo.findById(blogId).map(blog -> {
 			List<Users> users = blog.getPanel().getUsers();
+			List<Users> listUser = userRepo.findAll();
 			for (Users user : users) {
-				if (user.getEmail().equals(email) != false)
-					throw new IllegalAccessRequestException("Login User Not A Contributer...");
+				if (user.getEmail().equals(email) || listUser.contains(userRepo.findByEmail(email).get())) {
+					BlogPost blogPost = maptoBlogPost(postRequest);
+					blogPost.setBlog(blog);
+					blogPost = postRepo.save(blogPost);
+					return ResponseEntity.ok(response.setStatusCode(HttpStatus.OK.value()).setMessage("post is created")
+							.setData(mapToResponse(blogPost)));
+				}
 			}
-			BlogPost blogPost = maptoBlogPost(postRequest);
-			blogPost = postRepo.save(blogPost);
-			return ResponseEntity.ok(response.setStatusCode(HttpStatus.OK.value()).setMessage("post is created")
-					.setData(mapToResponse(blogPost)));
+			throw new IllegalAccessRequestException("Login User Not A Contributer...");
 
 		}).orElseThrow(() -> new BlogNotFoundException("blog not found by Given Id"));
 	}
@@ -65,11 +71,27 @@ public class BlogPostServiceImpl implements BlogPostService {
 
 		return postRepo.findById(postId).map(post -> {
 			post.setType(PostType.PUBLISHED);
+			post.setBlog(post.getBlog());
 			post = postRepo.save(post);
 			return ResponseEntity.ok(response.setStatusCode(HttpStatus.OK.value())
 					.setMessage("post is updated Draft To Published").setData(mapToResponse(post)));
 
 		}).orElseThrow(() -> new BlogNotFoundException("BlogPost not found by Given Id"));
+
+	}
+
+	@Override
+	public ResponseEntity<Responstructure<BlogPostResponse>> updatePost(BlogPostRequest postRequest, int postId) {
+		return postRepo.findById(postId).map(post -> {
+			post.setTitle(postRequest.getTitle());
+			post.setSubTitle(postRequest.getSubTitle());
+			post.setSummary(postRequest.getSummary());
+			post.setBlog(post.getBlog());
+			post = postRepo.save(post);
+			return ResponseEntity.ok(response.setStatusCode(HttpStatus.OK.value()).setMessage("post is updated..")
+					.setData(mapToResponse(post)));
+
+		}).orElseThrow(() -> new BlogNotFoundException("blogPost not found by Given id"));
 
 	}
 

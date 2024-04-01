@@ -42,9 +42,6 @@ public class BlogPost {
 	@Column(length = 3000)
 	private String summary;
 	private PostType type;
-	private String seo;
-	private String seoDescription;
-	private String[] seoTags;
 	@Column(updatable = false)
 	@CreatedDate
 	private LocalDateTime createAt;

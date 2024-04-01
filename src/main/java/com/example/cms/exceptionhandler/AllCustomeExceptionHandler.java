@@ -73,7 +73,7 @@ public class AllCustomeExceptionHandler {
 	public ResponseEntity<ErrorStructure<String>> handlerIllegalAccessRequestExceptionHandler(
 			IllegalAccessRequestException e) {
 		return ResponseEntity.badRequest().body(errorStructure.setStatusCode(HttpStatus.BAD_REQUEST.value())
-				.setMessage("Contributor is allready present").setRootCouse(e.getMessage()));
+				.setMessage("IllegalAccess Request......").setRootCouse(e.getMessage()));
 	}
 
 	@ExceptionHandler

@@ -1,10 +1,7 @@
 package com.example.cms.dto;
 
-import java.time.LocalDateTime;
-
 import com.example.cms.enums.PostType;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,11 +20,6 @@ public class BlogPostResponse {
 	private String subTitle;
 	private String summary;
 	private PostType type;
-	private String seo;
-	private String seoDescription;
-	private String[] seoTags;
-	private LocalDateTime createAt;
 	private String createBy;
-	private LocalDateTime lastModifiedAt;
-	private String LastModifiedBy;
+
 }

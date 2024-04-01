@@ -11,4 +11,6 @@ public interface BlogPostService {
 
 	ResponseEntity<Responstructure<BlogPostResponse>> createDraft(BlogPostRequest postRequest, int blogId);
 
+	ResponseEntity<Responstructure<BlogPostResponse>> updateDraft(int postId);
+
 }

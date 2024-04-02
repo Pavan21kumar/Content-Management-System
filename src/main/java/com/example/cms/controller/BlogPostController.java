@@ -51,14 +51,32 @@ public class BlogPostController {
 			@ApiResponse(responseCode = "200", description = "Post is Updated "),
 			@ApiResponse(responseCode = "400", description = "invalid inputs", content = @Content(schema = @Schema(implementation = ErrorStructure.class))),
 			@ApiResponse(responseCode = "404", description = "Post Not Found", content = @Content(schema = @Schema(implementation = ErrorStructure.class))) })
+
 	@PutMapping("/blog-posts/{postId}/post")
 	public ResponseEntity<Responstructure<BlogPostResponse>> updatePost(@Valid @RequestBody BlogPostRequest postRequest,
 			@PathVariable int postId) {
 		return blogService.updatePost(postRequest, postId);
 	}
+
+	@Operation(description = "this endpoit  is used to delete a Post Based On postId", responses = {
+			@ApiResponse(responseCode = "200", description = "Post is Updated "),
+			@ApiResponse(responseCode = "404", description = "post is not found inputs", content = @Content(schema = @Schema(implementation = ErrorStructure.class))),
+			@ApiResponse(responseCode = "404", description = "Unautherized Operation", content = @Content(schema = @Schema(implementation = ErrorStructure.class))) })
+
 	@DeleteMapping("/blog-posts/{postId}")
-	public ResponseEntity<Responstructure<String>> deleteBlogPost(@PathVariable int postId)
-	{
+	public ResponseEntity<Responstructure<String>> deleteBlogPost(@PathVariable int postId) {
 		return blogService.deletePost(postId);
 	}
+
+	@Operation(description = "this endpoit  is used to unpublished a Post Based On postId", responses = {
+			@ApiResponse(responseCode = "200", description = "Post is unpublished "),
+			@ApiResponse(responseCode = "404", description = "post is not found inputs", content = @Content(schema = @Schema(implementation = ErrorStructure.class))),
+			@ApiResponse(responseCode = "404", description = "Unautherized Operation", content = @Content(schema = @Schema(implementation = ErrorStructure.class))) })
+
+	@PutMapping("/unpublish/blog-posts/{postId}")
+	public ResponseEntity<Responstructure<BlogPostResponse>> unpublishBlogPost(@PathVariable int postId) {
+		return blogService.unpublishedBlogPost(postId);
+	}
+	
+	
 }

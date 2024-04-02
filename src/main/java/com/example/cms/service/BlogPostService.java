@@ -16,4 +16,6 @@ public interface BlogPostService {
 
 	ResponseEntity<Responstructure<String>> deletePost(int postId);
 
+	ResponseEntity<Responstructure<BlogPostResponse>> unpublishedBlogPost(int postId);
+
 }

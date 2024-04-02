@@ -133,4 +133,23 @@ public class BlogPostServiceImpl implements BlogPostService {
 
 	}
 
+	@Override
+	public ResponseEntity<Responstructure<BlogPostResponse>> unpublishedBlogPost(int postId) {
+
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		return postRepo.findById(postId).map(post -> {
+			if (post.getBlog().getUser().getEmail().equals(email) || post.getCreateBy().equals(email)) {
+
+				post.setType(PostType.DRAFT);
+				postRepo.save(post);
+				return ResponseEntity.ok(response.setStatusCode(HttpStatus.OK.value())
+						.setMessage("successpully unpublished the blogPost").setData(mapToResponse(post)));
+			}
+
+			throw new IllegalAccessRequestException("Owner Only Canm Delete The post..");
+
+		}).orElseThrow(() -> new PostNotFoundByIdException("post Not Found..."));
+
+	}
+
 }

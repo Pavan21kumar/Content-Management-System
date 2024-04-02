@@ -68,15 +68,4 @@ public class BlogPostController {
 		return blogService.deletePost(postId);
 	}
 
-	@Operation(description = "this endpoit  is used to unpublished a Post Based On postId", responses = {
-			@ApiResponse(responseCode = "200", description = "Post is unpublished "),
-			@ApiResponse(responseCode = "404", description = "post is not found inputs", content = @Content(schema = @Schema(implementation = ErrorStructure.class))),
-			@ApiResponse(responseCode = "404", description = "Unautherized Operation", content = @Content(schema = @Schema(implementation = ErrorStructure.class))) })
-
-	@PutMapping("/unpublish/blog-posts/{postId}")
-	public ResponseEntity<Responstructure<BlogPostResponse>> unpublishBlogPost(@PathVariable int postId) {
-		return blogService.unpublishedBlogPost(postId);
-	}
-	
-	
 }

@@ -21,6 +21,7 @@ import com.example.cms.repository.UsersRepository;
 import com.example.cms.service.BlogPostService;
 import com.example.cms.util.BlogNotFoundException;
 import com.example.cms.util.IllegalAccessRequestException;
+import com.example.cms.util.PostNotFoundByIdException;
 import com.example.cms.util.Responstructure;
 
 import jakarta.validation.Valid;
@@ -35,6 +36,7 @@ public class BlogPostServiceImpl implements BlogPostService {
 	private Responstructure<BlogPostResponse> response;
 	private UsersRepository userRepo;
 	private ContributionPanelRepository panelRepo;
+	private Responstructure<String> structure;
 
 	// String email =
 	// SecurityContextHolder.getContext().getAuthentication().getName();
@@ -112,6 +114,22 @@ public class BlogPostServiceImpl implements BlogPostService {
 				return true;
 			return false;
 		}).get();
+
+	}
+
+	@Override
+	public ResponseEntity<Responstructure<String>> deletePost(int postId) {
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		return postRepo.findById(postId).map(post -> {
+			if (post.getBlog().getUser().getEmail().equals(email) || post.getCreateBy().equals(email)) {
+				postRepo.delete(post);
+				return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value())
+						.setMessage("Post Is deletd..successFully").setData("Post Is Deleted "));
+			}
+
+			throw new IllegalAccessRequestException("Owner Only Canm Delete The post..");
+
+		}).orElseThrow(() -> new PostNotFoundByIdException("post Not Found..."));
 
 	}
 

@@ -11,6 +11,7 @@ import com.example.cms.util.DuplicateEmailException;
 import com.example.cms.util.ErrorStructure;
 import com.example.cms.util.IllegalAccessRequestException;
 import com.example.cms.util.PanelNotFoundByIdException;
+import com.example.cms.util.PostNotFoundByIdException;
 import com.example.cms.util.TitleAllreadyPresentException;
 import com.example.cms.util.TopicIsNullException;
 import com.example.cms.util.UNAUTHORIZEDException;
@@ -86,6 +87,12 @@ public class AllCustomeExceptionHandler {
 	public ResponseEntity<ErrorStructure<String>> handlerBlogNotFoundExceptionHandler(BlogNotFoundException e) {
 		return ResponseEntity.badRequest().body(errorStructure.setStatusCode(HttpStatus.BAD_REQUEST.value())
 				.setMessage("Blog Not Found ......").setRootCouse(e.getMessage()));
+	}
+
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> handlePostNotFoundByIdExceptionrHandler(PostNotFoundByIdException e) {
+		return ResponseEntity.badRequest().body(errorStructure.setStatusCode(HttpStatus.BAD_REQUEST.value())
+				.setMessage("Post Not Found ......").setRootCouse(e.getMessage()));
 	}
 
 }

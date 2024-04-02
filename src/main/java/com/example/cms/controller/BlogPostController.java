@@ -1,6 +1,7 @@
 package com.example.cms.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -50,9 +51,21 @@ public class BlogPostController {
 			@ApiResponse(responseCode = "200", description = "Post is Updated "),
 			@ApiResponse(responseCode = "400", description = "invalid inputs", content = @Content(schema = @Schema(implementation = ErrorStructure.class))),
 			@ApiResponse(responseCode = "404", description = "Post Not Found", content = @Content(schema = @Schema(implementation = ErrorStructure.class))) })
+
 	@PutMapping("/blog-posts/{postId}/post")
 	public ResponseEntity<Responstructure<BlogPostResponse>> updatePost(@Valid @RequestBody BlogPostRequest postRequest,
 			@PathVariable int postId) {
 		return blogService.updatePost(postRequest, postId);
 	}
+
+	@Operation(description = "this endpoit  is used to delete a Post Based On postId", responses = {
+			@ApiResponse(responseCode = "200", description = "Post is Updated "),
+			@ApiResponse(responseCode = "404", description = "post is not found inputs", content = @Content(schema = @Schema(implementation = ErrorStructure.class))),
+			@ApiResponse(responseCode = "404", description = "Unautherized Operation", content = @Content(schema = @Schema(implementation = ErrorStructure.class))) })
+
+	@DeleteMapping("/blog-posts/{postId}")
+	public ResponseEntity<Responstructure<String>> deleteBlogPost(@PathVariable int postId) {
+		return blogService.deletePost(postId);
+	}
+
 }

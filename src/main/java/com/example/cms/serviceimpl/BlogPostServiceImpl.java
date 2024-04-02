@@ -16,10 +16,12 @@ import com.example.cms.entity.Users;
 import com.example.cms.enums.PostType;
 import com.example.cms.repository.BlogPostRepository;
 import com.example.cms.repository.BlogsRepository;
+import com.example.cms.repository.ContributionPanelRepository;
 import com.example.cms.repository.UsersRepository;
 import com.example.cms.service.BlogPostService;
 import com.example.cms.util.BlogNotFoundException;
 import com.example.cms.util.IllegalAccessRequestException;
+import com.example.cms.util.PostNotFoundByIdException;
 import com.example.cms.util.Responstructure;
 
 import jakarta.validation.Valid;
@@ -33,6 +35,8 @@ public class BlogPostServiceImpl implements BlogPostService {
 	private BlogPostRepository postRepo;
 	private Responstructure<BlogPostResponse> response;
 	private UsersRepository userRepo;
+	private ContributionPanelRepository panelRepo;
+	private Responstructure<String> structure;
 
 	// String email =
 	// SecurityContextHolder.getContext().getAuthentication().getName();
@@ -41,16 +45,13 @@ public class BlogPostServiceImpl implements BlogPostService {
 	public ResponseEntity<Responstructure<BlogPostResponse>> createDraft(BlogPostRequest postRequest, int blogId) {
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		return blogRepo.findById(blogId).map(blog -> {
-			List<Users> users = blog.getPanel().getUsers();
-			for (Users user : users) {
-				if (user.getEmail().equals(email) || validation(email, blog)) {
+			if (validation(email, blog)) {
+				BlogPost blogPost = maptoBlogPost(postRequest);
+				blogPost.setBlog(blog);
+				blogPost = postRepo.save(blogPost);
+				return ResponseEntity.ok(response.setStatusCode(HttpStatus.OK.value()).setMessage("post is created")
+						.setData(mapToResponse(blogPost)));
 
-					BlogPost blogPost = maptoBlogPost(postRequest);
-					blogPost.setBlog(blog);
-					blogPost = postRepo.save(blogPost);
-					return ResponseEntity.ok(response.setStatusCode(HttpStatus.OK.value()).setMessage("post is created")
-							.setData(mapToResponse(blogPost)));
-				}
 			}
 			throw new IllegalAccessRequestException("Login User Not A Contributer...");
 
@@ -108,13 +109,46 @@ public class BlogPostServiceImpl implements BlogPostService {
 
 	private boolean validation(String email, Blogs blog) {
 		return userRepo.findByEmail(email).map(user -> {
-			List<Blogs> blogs = user.getBlog();
-			for (Blogs blogss : blogs) {
-				if (blogss.getPanel().getPanelId() == blog.getPanel().getPanelId())
-					return true;
-			}
+			if (blog.getUser().getEmail().equals(email)
+					|| panelRepo.existsByPanelIdAndUsers(blog.getPanel().getPanelId(), user))
+				return true;
 			return false;
 		}).get();
+
+	}
+
+	@Override
+	public ResponseEntity<Responstructure<String>> deletePost(int postId) {
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		return postRepo.findById(postId).map(post -> {
+			if (post.getBlog().getUser().getEmail().equals(email) || post.getCreateBy().equals(email)) {
+				postRepo.delete(post);
+				return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value())
+						.setMessage("Post Is deletd..successFully").setData("Post Is Deleted "));
+			}
+
+			throw new IllegalAccessRequestException("Owner Only Canm Delete The post..");
+
+		}).orElseThrow(() -> new PostNotFoundByIdException("post Not Found..."));
+
+	}
+
+	@Override
+	public ResponseEntity<Responstructure<BlogPostResponse>> unpublishedBlogPost(int postId) {
+
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		return postRepo.findById(postId).map(post -> {
+			if (post.getBlog().getUser().getEmail().equals(email) || post.getCreateBy().equals(email)) {
+
+				post.setType(PostType.DRAFT);
+				postRepo.save(post);
+				return ResponseEntity.ok(response.setStatusCode(HttpStatus.OK.value())
+						.setMessage("successpully unpublished the blogPost").setData(mapToResponse(post)));
+			}
+
+			throw new IllegalAccessRequestException("Owner Only Canm Delete The post..");
+
+		}).orElseThrow(() -> new PostNotFoundByIdException("post Not Found..."));
 
 	}
 

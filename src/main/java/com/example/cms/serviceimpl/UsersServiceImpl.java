@@ -40,7 +40,7 @@ public class UsersServiceImpl implements UsersService {
 
 	}
 
-	private UserResponse mapTouser(Users user) {
+	public UserResponse mapTouser(Users user) {
 
 		return UserResponse.builder().userId(user.getUserId()).userName(user.getUserName()).email(user.getEmail())
 				.createdAt(user.getCreatedAt()).lastModifiedAt(user.getLastModifiedAt()).build();

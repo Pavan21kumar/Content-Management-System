@@ -7,5 +7,16 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableJpaAuditing
 public class AuditingConfig {
 
-	
+//	@Bean
+//	AuditorAware<String> auditor() {
+//		// Authentication authentication =
+//		// SecurityContextHolder.getContext().getAuthentication();
+//
+//		return () -> Optional.of(
+//
+//				SecurityContextHolder.getContext().getAuthentication().getName());
+//
+////		 
+//	}
+
 }

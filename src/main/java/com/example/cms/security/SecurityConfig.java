@@ -22,8 +22,8 @@ public class SecurityConfig {
 
 	@Bean
 	PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder(12);//more secured and more use and 12 times hashing is basic secure
-	}	
+		return new BCryptPasswordEncoder(12);// more secured and more use and 12 times hashing is basic secure
+	}
 
 	@Bean
 	AuthenticationProvider authenticationProvider() {
@@ -34,33 +34,12 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
-	{
-		
-		return http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth->
-		auth.requestMatchers("/users/register","/users/{userId}").permitAll().anyRequest().authenticated()).formLogin(Customizer.withDefaults()).build();
+	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+		return http.csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/users/register", "/users/{userId}", "/blog-posts/{postId}/postType")
+						.permitAll().anyRequest().authenticated())
+				.formLogin(Customizer.withDefaults()).build();
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

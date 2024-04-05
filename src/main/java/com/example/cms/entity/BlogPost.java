@@ -1,13 +1,14 @@
 package com.example.cms.entity;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.example.cms.enums.PostType;
+import org.springframework.data.annotation.LastModifiedBy;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,8 +16,8 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,28 +26,36 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "BlogPost")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Users {
+public class BlogPost {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int userId;
-	private String userName;
-	private String email;
-	private String password;
-	@CreatedDate
+	private int postId;
+	private String title;
+	private String subTitle;
+	@Column(length = 3000)
+	private String summary;
+	private PostType type;
 	@Column(updatable = false)
-	private LocalDateTime createdAt;
+	@CreatedDate
+	private LocalDateTime createAt;
+	@Column(updatable = false)
+	private String createBy;
 	@LastModifiedDate
 	private LocalDateTime lastModifiedAt;
-	private boolean deleteU;
-	@OneToMany(mappedBy = "user")
-	private List<Blogs> blog;
-	
+	private String LastModifiedBy;
+
+	@ManyToOne
+	private Blogs blog;
+
+	@OneToOne(mappedBy = "post")
+	private Publish publish;
+
 }

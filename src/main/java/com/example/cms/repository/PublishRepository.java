@@ -6,4 +6,6 @@ import com.example.cms.entity.Publish;
 
 public interface PublishRepository extends JpaRepository<Publish, Integer> {
 
+	// Optional<sPublish> findByPost(int postId);
+
 }

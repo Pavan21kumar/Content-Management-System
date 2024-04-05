@@ -2,6 +2,7 @@ package com.example.cms.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -66,6 +67,26 @@ public class BlogPostController {
 	@DeleteMapping("/blog-posts/{postId}")
 	public ResponseEntity<Responstructure<String>> deleteBlogPost(@PathVariable int postId) {
 		return blogService.deletePost(postId);
+	}
+
+	@Operation(description = "this endpoit  is used to get  a Post Based On postId", responses = {
+			@ApiResponse(responseCode = "200", description = "Post is found "),
+			@ApiResponse(responseCode = "404", description = "post is not found inputs", content = @Content(schema = @Schema(implementation = ErrorStructure.class))),
+			@ApiResponse(responseCode = "404", description = "Unautherized Operation", content = @Content(schema = @Schema(implementation = ErrorStructure.class))) })
+
+	@GetMapping("/blog-posts/{postId}")
+	public ResponseEntity<Responstructure<BlogPostResponse>> fetchBlogPost(@PathVariable int postId) {
+		return blogService.fetchBlogPostById(postId);
+	}
+
+	@Operation(description = "this endpoit  is used to get a Post Based On postId and only published.", responses = {
+			@ApiResponse(responseCode = "200", description = "Post is found "),
+			@ApiResponse(responseCode = "404", description = "post is not found inputs", content = @Content(schema = @Schema(implementation = ErrorStructure.class))),
+			@ApiResponse(responseCode = "404", description = "Unautherized Operation", content = @Content(schema = @Schema(implementation = ErrorStructure.class))) })
+
+	@GetMapping("/blog-posts/{postId}/postType")
+	public ResponseEntity<Responstructure<BlogPostResponse>> findByIdAndPostType(@PathVariable int postId) {
+		return blogService.findByIdAndPostType(postId);
 	}
 
 }

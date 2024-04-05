@@ -17,6 +17,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,14 +47,15 @@ public class BlogPost {
 	@CreatedDate
 	private LocalDateTime createAt;
 	@Column(updatable = false)
-	@CreatedBy
 	private String createBy;
 	@LastModifiedDate
 	private LocalDateTime lastModifiedAt;
-	@LastModifiedBy
 	private String LastModifiedBy;
 
 	@ManyToOne
 	private Blogs blog;
+
+	@OneToOne(mappedBy = "post")
+	private Publish publish;
 
 }

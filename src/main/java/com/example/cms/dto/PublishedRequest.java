@@ -18,5 +18,6 @@ public class PublishedRequest {
 	private String seoTitle;
 	private String seoDescription;
 	private String[] seoTags;
-	
+	private ScheduleRequest schedule;
+
 }

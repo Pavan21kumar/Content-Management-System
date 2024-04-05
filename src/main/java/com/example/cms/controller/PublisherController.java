@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.cms.dto.BlogPostResponse;
-import com.example.cms.dto.PostResponse;
+import com.example.cms.dto.PublishResponse;
 import com.example.cms.dto.PublishedRequest;
 import com.example.cms.service.PublisherService;
 import com.example.cms.util.ErrorStructure;
@@ -33,7 +33,7 @@ public class PublisherController {
 			@ApiResponse(responseCode = "404", description = "post Not Found", content = @Content(schema = @Schema(implementation = ErrorStructure.class))) })
 
 	@PostMapping("/blog-posts/{postId}/publishes")
-	public ResponseEntity<Responstructure<PostResponse>> publishingPost(
+	public ResponseEntity<Responstructure<PublishResponse>> publishingPost(
 			@Valid @RequestBody PublishedRequest publishedRequest, @PathVariable int postId) {
 		return service.publishPost(publishedRequest, postId);
 	}

@@ -12,10 +12,14 @@ public interface BlogPostService {
 
 	ResponseEntity<Responstructure<BlogPostResponse>> updateDraft(int postId);
 
-	ResponseEntity<Responstructure<BlogPostResponse>> updatePost( BlogPostRequest postRequest, int postId);
+	ResponseEntity<Responstructure<BlogPostResponse>> updatePost(BlogPostRequest postRequest, int postId);
 
 	ResponseEntity<Responstructure<String>> deletePost(int postId);
 
 	ResponseEntity<Responstructure<BlogPostResponse>> unpublishedBlogPost(int postId);
+
+	ResponseEntity<Responstructure<BlogPostResponse>> fetchBlogPostById(int postId);
+
+	ResponseEntity<Responstructure<BlogPostResponse>> findByIdAndPostType(int postId);
 
 }

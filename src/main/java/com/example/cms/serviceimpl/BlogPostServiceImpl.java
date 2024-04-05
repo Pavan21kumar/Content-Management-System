@@ -1,7 +1,5 @@
 package com.example.cms.serviceimpl;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,10 +7,10 @@ import org.springframework.stereotype.Service;
 
 import com.example.cms.dto.BlogPostRequest;
 import com.example.cms.dto.BlogPostResponse;
-import com.example.cms.dto.BlogResponse;
+import com.example.cms.dto.PublishResponse;
 import com.example.cms.entity.BlogPost;
 import com.example.cms.entity.Blogs;
-import com.example.cms.entity.Users;
+import com.example.cms.entity.Publish;
 import com.example.cms.enums.PostType;
 import com.example.cms.repository.BlogPostRepository;
 import com.example.cms.repository.BlogsRepository;
@@ -24,7 +22,6 @@ import com.example.cms.util.IllegalAccessRequestException;
 import com.example.cms.util.PostNotFoundByIdException;
 import com.example.cms.util.Responstructure;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -38,15 +35,12 @@ public class BlogPostServiceImpl implements BlogPostService {
 	private ContributionPanelRepository panelRepo;
 	private Responstructure<String> structure;
 
-	// String email =
-	// SecurityContextHolder.getContext().getAuthentication().getName();
-
 	@Override
 	public ResponseEntity<Responstructure<BlogPostResponse>> createDraft(BlogPostRequest postRequest, int blogId) {
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		return blogRepo.findById(blogId).map(blog -> {
 			if (validation(email, blog)) {
-				BlogPost blogPost = maptoBlogPost(postRequest);
+				BlogPost blogPost = maptoBlogPost(postRequest, email);
 				blogPost.setBlog(blog);
 				blogPost = postRepo.save(blogPost);
 				return ResponseEntity.ok(response.setStatusCode(HttpStatus.OK.value()).setMessage("post is created")
@@ -61,13 +55,22 @@ public class BlogPostServiceImpl implements BlogPostService {
 	public BlogPostResponse mapToResponse(BlogPost post) {
 
 		return BlogPostResponse.builder().title(post.getTitle()).postId(post.getPostId()).summary(post.getSummary())
-				.createBy(post.getCreateBy()).subTitle(post.getSubTitle()).type(post.getType()).build();
+				.subTitle(post.getSubTitle()).publishResponse(mapToPublishRespons(post.getPublish())).build();
 	}
 
-	private BlogPost maptoBlogPost(BlogPostRequest postRequest) {
+	private PublishResponse mapToPublishRespons(Publish publish) {
+		if (publish == null) {
+			return null;
+
+		}
+		return PublishResponse.builder().publishId(publish.getPublishId()).seoTitle(publish.getSeoTitle())
+				.seoDescription(publish.getSeoDescription()).seoTags(publish.getSeoTags()).build();
+	}
+
+	private BlogPost maptoBlogPost(BlogPostRequest postRequest, String email) {
 
 		return BlogPost.builder().title(postRequest.getTitle()).subTitle(postRequest.getSubTitle())
-				.summary(postRequest.getSummary()).type(PostType.DRAFT).build();
+				.summary(postRequest.getSummary()).type(PostType.DRAFT).createBy(email).LastModifiedBy(email).build();
 
 	}
 
@@ -96,6 +99,7 @@ public class BlogPostServiceImpl implements BlogPostService {
 				post.setTitle(postRequest.getTitle());
 				post.setSubTitle(postRequest.getSubTitle());
 				post.setSummary(postRequest.getSummary());
+				post.setLastModifiedBy(email);
 				post.setBlog(post.getBlog());
 				post = postRepo.save(post);
 				return ResponseEntity.ok(response.setStatusCode(HttpStatus.OK.value()).setMessage("post is updated..")
@@ -149,6 +153,26 @@ public class BlogPostServiceImpl implements BlogPostService {
 			throw new IllegalAccessRequestException("Owner Only Canm Delete The post..");
 
 		}).orElseThrow(() -> new PostNotFoundByIdException("post Not Found..."));
+
+	}
+
+	@Override
+	public ResponseEntity<Responstructure<BlogPostResponse>> fetchBlogPostById(int postId) {
+		return postRepo.findById(postId).map(post -> {
+			return ResponseEntity.ok(response.setStatusCode(HttpStatus.OK.value()).setMessage("post is Found")
+					.setData(mapToResponse(post)));
+
+		}).orElseThrow(() -> new PostNotFoundByIdException("post Not Found..."));
+
+	}
+
+	@Override
+	public ResponseEntity<Responstructure<BlogPostResponse>> findByIdAndPostType(int postId) {
+		return postRepo.findByPostIdAndType(postId, PostType.PUBLISHED).map(post -> {
+
+			return ResponseEntity.status(HttpStatus.FOUND).body(response.setStatusCode(HttpStatus.FOUND.value())
+					.setMessage("post found").setData(mapToResponse(post)));
+		}).orElseThrow(() -> new PostNotFoundByIdException("blog post not found by given Id"));
 
 	}
 

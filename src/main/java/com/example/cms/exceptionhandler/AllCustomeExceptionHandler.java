@@ -10,6 +10,7 @@ import com.example.cms.util.BlogNotFoundException;
 import com.example.cms.util.DuplicateEmailException;
 import com.example.cms.util.ErrorStructure;
 import com.example.cms.util.IllegalAccessRequestException;
+import com.example.cms.util.InValidDateTimeException;
 import com.example.cms.util.PanelNotFoundByIdException;
 import com.example.cms.util.PostNotFoundByIdException;
 import com.example.cms.util.TitleAllreadyPresentException;
@@ -93,6 +94,13 @@ public class AllCustomeExceptionHandler {
 	public ResponseEntity<ErrorStructure<String>> handlePostNotFoundByIdExceptionrHandler(PostNotFoundByIdException e) {
 		return ResponseEntity.badRequest().body(errorStructure.setStatusCode(HttpStatus.BAD_REQUEST.value())
 				.setMessage("Post Not Found ......").setRootCouse(e.getMessage()));
+	}
+
+	// InValidDateTimeException
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> handleInValidDateTimeExceptionHandler(InValidDateTimeException e) {
+		return ResponseEntity.badRequest().body(errorStructure.setStatusCode(HttpStatus.BAD_REQUEST.value())
+				.setMessage("invalid time . ......").setRootCouse(e.getMessage()));
 	}
 
 }

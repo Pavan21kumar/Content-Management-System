@@ -1,6 +1,6 @@
 package com.example.cms.dto;
 
-import com.example.cms.enums.PostType;
+import com.example.cms.entity.Schedule;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,15 +13,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class PostResponse {
+public class PublishResponse {
 
-	private int postId;
-	private String title;
-	private String subTitle;
-	private String summary;
-	private PostType type;
-	private String createBy;
+	private int publishId;
 	private String seoTitle;
 	private String seoDescription;
 	private String[] seoTags;
+	private Schedule schedule;
+
 }
